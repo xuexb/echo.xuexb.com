@@ -45,7 +45,7 @@
 
     <ol>
         <li>
-            <h3>
+            <h3 id="t1">
                 <a href="/api/hello">/api/hello</a>
                 <span>简单hello world</span>
             </h3>
@@ -59,7 +59,7 @@ location = /api/hello {
         </li>
 
         <li>
-            <h3>
+            <h3 id="t2">
                 <a href="/api/proxy_before_after">/api/proxy_before_after</a>
                 <span>反向代理添加前置、后置内容</span>
             </h3>
@@ -78,7 +78,7 @@ location = /api/proxy_before_after {
         </li>
 
         <li>
-            <h3>
+            <h3 id="t3">
                 <a href="/api/sleep/1">/api/sleep/秒</a>
                 <span>sleep测试</span>
             </h3>
@@ -103,7 +103,7 @@ location ~* ^/api/sleep(\/\d*\/?)?$ {
         </li>
 
         <li>
-            <h3>
+            <h3 id="t4">
                 <a href="/api/combo?/a.js,/b.js">/api/combo?file1,file2</a>
                 <span>模拟combo</span>
             </h3>
@@ -122,7 +122,7 @@ location = /api/combo {
         </li>
 
         <li>
-            <h3>
+            <h3 id="t5">
                 <a href="/api/echo/我是测试">/api/echo/内容</a>
                 <span>输出内容</span>
             </h3>
@@ -141,7 +141,7 @@ location ~* ^/api/echo(\/[^\/]*?\/?)?$ {
         </li>
 
         <li>
-            <h3>
+            <h3 id="t6">
                 <a href="/api/dump/path?a=1&中文=好的#123">/api/dump/path?a=1&中文=好的#123</a>
                 <span>打印nginx变量</span>
             </h3>

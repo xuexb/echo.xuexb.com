@@ -42,6 +42,9 @@
 <body>
 
     <h1>学习nginx echo module写的demo</h1>
+    <p>
+        注意: 本站使用的<code>nginx</code>反向代理架设的Https
+    </p>
 
     <ol>
         <li>
@@ -150,7 +153,7 @@ location ~* ^/api/echo(\/[^\/]*?\/?)?$ {
         <li>
             <h3 id="t6">
                 <a href="/api/cache/?r=时间缀">/api/cache/?r=时间缀</a>
-                <span>查看 nginx proxy cache 变量</span>
+                <span>查看 nginx proxy cache 变量, 由于有缓存, 请添加时间缀来查看最新响应的内容~</span>
             </h3>
         </li>
     </ol>

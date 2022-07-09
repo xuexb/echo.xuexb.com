@@ -114,7 +114,7 @@ jobs:
 
             # 注册 dyups
             dyupsurl="${{ secrets.DYUPS_SERVER }}/api/${{ env.DYUPS_DOMAIN }}?r=$RANDOM"
-            httpcode=`curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d '[{"address":"${{ secrets.SSH_HOST }}","port":$port}]' --connect-timeout 3 $dyupsurl -o /dev/null`
+            httpcode=`curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d "[{\"address\":\"${{ secrets.SSH_HOST }}\",\"port\":$port}]" --connect-timeout 3 $dyupsurl -o /dev/null`
             if [ "$httpcode" != "200" ]; then
               echo "注册 dyups 失败"
               exit 1

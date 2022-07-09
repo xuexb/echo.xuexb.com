@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  dyups:
+    image: echo.xuexb.com-local:latest
+    container_name: echo.xuexb.com-local
+    build: .
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - ./public:/usr/local/webapp
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf

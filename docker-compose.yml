@@ -6,8 +6,6 @@ services:
     container_name: echo.xuexb.com-local
     build: .
     ports:
-      - 80:80
-      - 443:443
       - 8080:8080
     volumes:
       - ./public:/usr/local/webapp

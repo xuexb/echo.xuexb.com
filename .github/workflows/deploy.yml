@@ -120,11 +120,11 @@ jobs:
               exit 1
             fi
 
-            # 刷新 dyups
-            dyupsurl="${{ secrets.DYUPS_SERVER }}/api/reload?r=$RANDOM"
+            # 同步 dyups
+            dyupsurl="${{ secrets.DYUPS_SERVER }}/api/sync?r=$RANDOM"
             httpcode=`curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' --connect-timeout 3 $dyupsurl -o /dev/null`
             if [ "$httpcode" != "200" ]; then
-              echo "刷新 dyups 失败"
+              echo "同步 dyups 失败"
               exit 1
             fi
   test:

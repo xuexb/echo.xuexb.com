@@ -42,7 +42,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=ref,enable=true,value=pr-${{ github.event.pull_request.number }}
+            type=raw,value=pr-${{ github.event.pull_request.number }}
       - name: Build Docker image
         uses: docker/build-push-action@v3
         with:

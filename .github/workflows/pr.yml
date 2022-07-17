@@ -50,7 +50,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  depoly:
+  deploy:
     needs: build-and-push-image
     if: ${{ needs.build-and-push-image.result == 'success' }}
     uses: ./.github/workflows/deploy.yml
@@ -61,7 +61,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     needs: [build-and-push-image, deploy]
-    if: ${{ needs.depoly.result == 'success' }}
+    if: ${{ needs.deploy.result == 'success' }}
     steps:
       - uses: actions/github-script@v6
         with:

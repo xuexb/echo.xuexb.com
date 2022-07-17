@@ -6,16 +6,19 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_VERSION: pr-${{ github.event.pull_request.number }}
-  DOMAIN: echo-pr-${{ github.event.pull_request.number }}.dev.xuexb.com
 
 jobs:
   build-and-push-image:
     environment: test
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: dump1
+        run: |
+          echo "${{ toJSON(github) }}"
       - name: Checkout PR
         uses: actions/checkout@v3
         with:
@@ -39,7 +42,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=${{ env.IMAGE_VERSION }}
+            type=raw,value=pr-${{ github.event.pull_request.number }}
       - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
@@ -53,11 +56,11 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     with:
-      version: ${{ env.IMAGE_VERSION }}
-      domain: ${{ env.DOMAIN }}
+      version: ${{ needs.build-and-push-image.outputs.version }}
+      domain: echo-${{ needs.build-and-push-image.outputs.version }}.dev.xuexb.com
   comment:
     runs-on: ubuntu-latest
-    needs: depoly
+    needs: [build-and-push-image, deploy]
     if: ${{ needs.depoly.result == 'success' }}
     steps:
       - uses: actions/github-script@v6
@@ -67,5 +70,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `**Welcome**, The deployment is successful, please visit <https://${{ env.DOMAIN }}> .✨`
+              body: `**Welcome**, The deployment is successful, please visit <https://echo-${{ needs.build-and-push-image.outputs.version }}.dev.xuexb.com> .✨`
             })

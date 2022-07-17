@@ -9,7 +9,7 @@ on:
         type: string
         required: false
       domain:
-        description: '域名'
+        description: '部署域名'
         type: string
         required: true
     secrets:

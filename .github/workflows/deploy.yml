@@ -9,7 +9,7 @@ on:
         type: string
         required: false
       domain:
-        description: '域名'
+        description: '部署域名'
         type: string
         required: true
     secrets:
@@ -126,10 +126,11 @@ jobs:
           result="[$result]"
           echo "::set-output name=result::$result"
       - name: Bind dyups
+        timeout-minutes: 5
         run: |
             # 注册 dyups ，会自动同步
             dyupsurl="${{ secrets.DYUPS_SERVER }}/api/${{ env.DOMAIN }}?r=$RANDOM"
-            httpcode=`curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d '${{ steps.deploy.outputs.result }}' --connect-timeout 3 $dyupsurl -o /dev/null`
+            httpcode=$(curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d '${{ steps.deploy.outputs.result }}' $dyupsurl -o /dev/null)
             if [ "$httpcode" != "200" ]; then
               echo "注册 dyups 失败，响应码：$httpcode"
               exit 1
@@ -140,8 +141,9 @@ jobs:
     if: ${{ needs.deploy.result == 'success' }}
     steps:
       - name: Test
+        timeout-minutes: 1
         run: |
-          httpcode=`curl -sL -w '%{http_code}' --connect-timeout 3 https://${{ env.DOMAIN }} -o /dev/null`
+          httpcode=`curl -sL -w '%{http_code}' --connect-timeout 5 https://${{ env.DOMAIN }} -o /dev/null`
           if [ "$httpcode" != "200" ]; then
             echo "访问 dyups WLB 错误，响应码：$httpcode"
             exit 1

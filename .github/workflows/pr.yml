@@ -50,14 +50,11 @@ jobs:
           # push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: dump
-        run: |
-          echo "${{ steps.meta.outputs.tags }}"
-  # depoly:
-  #   needs: build-and-push-image
-  #   if: ${{ needs.build-and-push-image.result == 'success' }}
-  #   uses: ./.github/workflows/deploy.yml
-  #   secrets: inherit
-  #   with:
-  #     version: ${{ needs.build-and-push-image.outputs.version }}
-  #     domain: echo-${{ needs.build-and-push-image.outputs.version }}.dev.xuexb.com
+  depoly:
+    needs: build-and-push-image
+    if: ${{ needs.build-and-push-image.result == 'success' }}
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
+      version: ${{ needs.build-and-push-image.outputs.version }}
+      domain: echo-${{ needs.build-and-push-image.outputs.version }}.dev.xuexb.com

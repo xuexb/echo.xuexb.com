@@ -47,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: true
+          # push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   depoly:
@@ -58,3 +58,17 @@ jobs:
     with:
       version: ${{ needs.build-and-push-image.outputs.version }}
       domain: echo-${{ needs.build-and-push-image.outputs.version }}.dev.xuexb.com
+  comment:
+    runs-on: ubuntu-latest
+    needs: depoly
+    if: ${{ needs.depoly.result == 'success' }}
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `**Welcome**, The deployment is successful, please visit <https://echo-${{ github.event.pull_request.number }}.dev.xuexb.com> .✨`
+            })

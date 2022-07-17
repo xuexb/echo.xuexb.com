@@ -131,10 +131,6 @@ jobs:
             # 注册 dyups ，会自动同步
             dyupsurl="${{ secrets.DYUPS_SERVER }}/api/${{ env.DOMAIN }}?r=$RANDOM"
             httpcode=$(curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d '${{ steps.deploy.outputs.result }}' $dyupsurl -o /dev/null)
-            # 重试一次
-            if [ "$httpcode" != "200" ]; then
-              httpcode=$(curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d '${{ steps.deploy.outputs.result }}' $dyupsurl -o /dev/null)
-            fi
             if [ "$httpcode" != "200" ]; then
               echo "注册 dyups 失败，响应码：$httpcode"
               exit 1

@@ -7,6 +7,11 @@ on:
         description: '部署版本'
         default: 'master'
         type: string
+        required: false
+      domain:
+        description: '域名'
+        type: string
+        required: true
     secrets:
       SSH_HOST:
         required: true
@@ -30,14 +35,19 @@ on:
         description: '部署版本'
         default: 'master'
         type: string
+        required: false
+      domain:
+        description: '部署域名'
+        default: 'echo.xuexb.com'
+        type: string
+        required: false
 
 env:
   REPO: ${{ github.repository }}
   IMAGE_VERSION: ${{ inputs.version || github.event.inputs.version }}
   MIRROR_REPOSITORY_TAG: ${{ secrets.GHCR_MIRROR }}/${{ github.repository }}:${{ inputs.version || github.event.inputs.version }}
   OWNER: xuexb
-  CONTAINER_NAME: echo.xuexb.com
-  DYUPS_DOMAIN: echo.xuexb.com
+  DOMAIN: ${{ inputs.domain || github.event.inputs.domain }}
 
 jobs:
   check-version:
@@ -78,15 +88,15 @@ jobs:
           # 生成文件部署文件
           echo '#!/bin/bash
           docker pull ${{ env.MIRROR_REPOSITORY_TAG }} > /dev/null 2>&1 \
-            && (docker ps -aq --filter "name=${{ env.CONTAINER_NAME }}" | xargs docker rm -f || echo "Delete fail") > /dev/null 2>&1 \
+            && (docker ps -aq --filter "name=${{ env.DOMAIN }}" | xargs docker rm -f || echo "Delete fail") > /dev/null 2>&1 \
             && docker run \
                 -p 8080 \
                 --rm \
                 -d \
-                --name "${{ env.CONTAINER_NAME }}" \
+                --name "${{ env.DOMAIN }}" \
                 ${{ env.MIRROR_REPOSITORY_TAG }} > /dev/null 2>&1 \
             && ip=$(curl -s --max-time 5 ifconfig.me) \
-            && port=$(docker ps --filter "name=${{ env.CONTAINER_NAME }}" --format "{{.Ports}}" -a | awk -F ":" "{print \$2}" | awk -F "->" "{print \$1}") \
+            && port=$(docker ps --filter "name=${{ env.DOMAIN }}" --format "{{.Ports}}" -a | awk -F ":" "{print \$2}" | awk -F "->" "{print \$1}") \
             && if [ "$ip" == "" ]; then exit 1; fi \
             && if [ "$port" == "" ]; then exit 2; fi \
             && httpcode=`curl -sL -w '%{http_code}' --connect-timeout 3 "127.0.0.1:$port/?r=$RANDOM" -o /dev/null` \
@@ -118,7 +128,7 @@ jobs:
       - name: Bind dyups
         run: |
             # 注册 dyups ，会自动同步
-            dyupsurl="${{ secrets.DYUPS_SERVER }}/api/${{ env.DYUPS_DOMAIN }}?r=$RANDOM"
+            dyupsurl="${{ secrets.DYUPS_SERVER }}/api/${{ env.DOMAIN }}?r=$RANDOM"
             httpcode=`curl -sL -w '%{http_code}' -H 'x-dyups-token: ${{ secrets.DYUPS_TOKEN }}' -X POST -d '${{ steps.deploy.outputs.result }}' --connect-timeout 3 $dyupsurl -o /dev/null`
             if [ "$httpcode" != "200" ]; then
               echo "注册 dyups 失败，响应码：$httpcode"
@@ -131,7 +141,7 @@ jobs:
     steps:
       - name: Test
         run: |
-          httpcode=`curl -sL -w '%{http_code}' --connect-timeout 3 https://${{ env.DYUPS_DOMAIN }} -o /dev/null`
+          httpcode=`curl -sL -w '%{http_code}' --connect-timeout 3 https://${{ env.DOMAIN }} -o /dev/null`
           if [ "$httpcode" != "200" ]; then
             echo "访问 dyups WLB 错误，响应码：$httpcode"
             exit 1

@@ -1,9 +1,7 @@
-name: Publish
+name: Publish pull request
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
 
 env:
   REGISTRY: ghcr.io
@@ -48,4 +46,4 @@ jobs:
     secrets: inherit
     with:
       version: ${{ needs.build-and-push-image.outputs.version }}
-      domain: echo.xuexb.com
+      domain: echo-${{ needs.build-and-push-image.outputs.version }}.dev.xuexb.com

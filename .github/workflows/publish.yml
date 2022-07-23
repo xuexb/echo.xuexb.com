@@ -11,11 +11,9 @@ env:
   DOMAIN: echo.xuexb.com
 
 jobs:
-  build-and-push-image:
+  deploy-prd:
     runs-on: ubuntu-latest
     environment: prd
-    outputs:
-      version: ${{ steps.meta.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

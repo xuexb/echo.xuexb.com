@@ -21,7 +21,7 @@ jobs:
           path: source
       - name: Merge PR
         run: |
-          rm -rf source/.github
+          rm -rf source/.github/workflows
           cp -r source/* .
           rm -rf source
       - name: Login to GitHub Container Registry

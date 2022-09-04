@@ -1,0 +1,21 @@
+name: Clean pull request
+
+on:
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  clean-dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: clean
+        uses: xuexb/dyups-actions/deploy@master
+        with:
+          ssh-host: ${{ secrets.SSH_HOST }}
+          ssh-username: ${{ secrets.SSH_USERNAME }}
+          ssh-key: ${{ secrets.SSH_KEY }}
+          ssh-port: ${{ secrets.SSH_PORT }}
+          dyups-server: ${{ secrets.DYUPS_SERVER }}
+          dyups-token: ${{ secrets.DYUPS_TOKEN }}
+          domain: echo.xuexb.com

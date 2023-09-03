@@ -13,7 +13,7 @@ jobs:
     environment: test
     steps:
       - name: clean
-        uses: xuexb/dyups-actions/deploy@master
+        uses: xuexb/dyups-actions/clean@master
         with:
           ssh-host: ${{ secrets.SSH_HOST }}
           ssh-username: ${{ secrets.SSH_USERNAME }}

@@ -4,10 +4,13 @@ on:
   pull_request_target:
     types: [closed]
 
+env:
+  DOMAIN: echo-pr-${{ github.event.pull_request.number }}.dev.xuexb.com
+
 jobs:
-  clean-dev:
+  clean-test:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: test
     steps:
       - name: clean
         uses: xuexb/dyups-actions/deploy@master
@@ -18,4 +21,4 @@ jobs:
           ssh-port: ${{ secrets.SSH_PORT }}
           dyups-server: ${{ secrets.DYUPS_SERVER }}
           dyups-token: ${{ secrets.DYUPS_TOKEN }}
-          domain: echo.xuexb.com
+          domain: ${{ env.DOMAIN }}

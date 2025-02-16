@@ -12,13 +12,26 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
+      - name: Configure 1Password Service Account
+        uses: 1password/load-secrets-action/configure@v2
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      - name: Load credentials
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          SSH_HOST: "op://ecs-cicd/dyups-agent/mjqbkhplbfjdp6eacrvkr36hsa/host"
+          SSH_USERNAME: "op://ecs-cicd/dyups-agent/mjqbkhplbfjdp6eacrvkr36hsa/username"
+          SSH_KEY: "op://ecs-cicd/dyups-agent/private_key"
+          SSH_PORT: "op://ecs-cicd/dyups-agent/mjqbkhplbfjdp6eacrvkr36hsa/port"
       - name: clean
         uses: xuexb/dyups-actions/clean@master
         with:
-          ssh-host: ${{ secrets.SSH_HOST }}
-          ssh-username: ${{ secrets.SSH_USERNAME }}
-          ssh-key: ${{ secrets.SSH_KEY }}
-          ssh-port: ${{ secrets.SSH_PORT }}
+          ssh-host: ${{ env.SSH_HOST }}
+          ssh-username: ${{ env.SSH_USERNAME }}
+          ssh-key: ${{ env.SSH_KEY }}
+          ssh-port: ${{ env.SSH_PORT }}
           dyups-server: ${{ secrets.DYUPS_SERVER }}
           dyups-token: ${{ secrets.DYUPS_TOKEN }}
           domain: ${{ env.DOMAIN }}
